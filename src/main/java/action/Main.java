@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 
 public class Main {
     public static CyclicBarrier BARRIER;
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         try {
             int numberThreads = Integer.parseInt(args[0]);
             BARRIER = new CyclicBarrier(numberThreads);
