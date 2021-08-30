@@ -1,6 +1,5 @@
 package threads;
 
-import action.Main;
 import entities.Shop;
 
 import java.util.Random;
@@ -14,31 +13,35 @@ public class Customer implements Runnable {
     private int sumBuy;
     private final Shop shop;
     private final Random rand = new Random();
-    private final CyclicBarrier BARRIER = Main.BARRIER;
+    private final CyclicBarrier barrier;
+    private final int randRangeBuy = 10;
 
-    public Customer(int id, Shop shop) {
+
+    public Customer(int id, Shop shop, CyclicBarrier barrier) {
         this.id = id;
         this.shop = shop;
+        this.barrier = barrier;
     }
 
 
     @Override
     public void run() {
-        while (shop.getAmountProduct().get() != 0) {
-            try {
-                int amountBuy = rand.nextInt(11);
+        try {
+            while (!shop.amountProductIsEmpty()) {
+                int amountBuy = rand.nextInt(randRangeBuy) + 1;
                 Integer amount = shop.buyProduct(amountBuy);
-                sumBuy += amount;
-                countPurchase++;
-                BARRIER.await();
-            } catch (BrokenBarrierException e) {
-//                System.out.print("");
-            } catch (InterruptedException e){
-                System.out.println("Возникла ошибка работы с потоком");
+                if (amount > 0) {
+                    countPurchase++;
+                    sumBuy += amount;
+                }
+                barrier.await();
             }
+            if (barrier.getNumberWaiting() > 0) {
+                barrier.await();
+            }
+            System.out.println("Customer" + id + ": countPurchase - " + countPurchase + ", sumPrice= " + sumBuy);
+        } catch (InterruptedException | BrokenBarrierException e) {
+            System.out.println("Возникла ошибка работы с потоком");
         }
-        if (shop.getAmountProduct().get() == 0)
-            BARRIER.reset();
-        System.out.println("Customer" + id + ": countPurchase - " + countPurchase + ", sumPrice= " + sumBuy);
     }
 }
