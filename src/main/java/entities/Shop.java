@@ -8,7 +8,7 @@ public class Shop {
         this.amountProduct = amountProduct;
     }
 
-    public boolean amountProductIsEmpty() {
+    public synchronized boolean amountProductIsEmpty() {
         return amountProduct == 0;
     }
 
