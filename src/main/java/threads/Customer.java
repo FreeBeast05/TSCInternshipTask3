@@ -29,7 +29,7 @@ public class Customer implements Runnable {
         try {
             while (!shop.amountProductIsEmpty()) {
                 int amountBuy = rand.nextInt(randRangeBuy) + 1;
-                Integer amount = shop.buyProduct(amountBuy);
+                int amount = shop.buyProduct(amountBuy);
                 if (amount > 0) {
                     countPurchase++;
                     sumBuy += amount;
